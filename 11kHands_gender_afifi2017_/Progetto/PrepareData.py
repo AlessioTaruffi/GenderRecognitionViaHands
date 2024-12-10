@@ -12,8 +12,6 @@ def prepare_data(num_exp: int, num_train: int, num_test: int):
     # Create a flag column to identify the chosen images
     df['chosen'] = 0
 
-    #print(df_palmar.head())
-    #print(df_dorsal.head())
 
     # Create a data structure to store the images' name and the corresponding label
     data_structure = {}
