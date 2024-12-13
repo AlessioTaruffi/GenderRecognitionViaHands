@@ -9,10 +9,6 @@ def prepare_data(num_exp: int, num_train: int, num_test: int):
     #print(len(df_palmar))
     #print(len(df_dorsal))
 
-    # Create a flag column to identify the chosen images
-    df['chosen'] = 0
-
-
     # Create a data structure to store the images' name and the corresponding label
     data_structure = {}
     train_test_list = ['train', 'test']
@@ -83,7 +79,7 @@ def prepare_data(num_exp: int, num_train: int, num_test: int):
     
     return data_structure
         
-print(prepare_data(num_exp=1, num_train=5, num_test=5))
+#print(prepare_data(num_exp=1, num_train=5, num_test=5))
 
 
 

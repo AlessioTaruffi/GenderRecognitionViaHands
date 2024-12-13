@@ -26,6 +26,11 @@ class CustomImageDataset(Dataset):
 
         male_female_list = ['male', 'female']
         # Lista dei nomi dei file immagine
+        #print(data_structure)
+        #print(id_exp)
+        #print(train_test)
+        #print(palmar_dorsal)
+
         self.image_filenames = data_structure[id_exp][train_test][palmar_dorsal]['male'] + data_structure[id_exp][train_test][palmar_dorsal]['female'] 
 
         for gender in male_female_list:
@@ -63,35 +68,15 @@ class CustomImageDataset(Dataset):
             image = self.transform[1](image)
         return image, label
 
-    
 
-
-# USIAMO LE NOSTRE :)
-# Definisci le trasformazioni da applicare alle immagini (opzionale)
-palmar_transform = transforms.Compose([
-    CustomPalmTransform(),
-    transforms.ToTensor(),          # Converte le immagini in tensori
-])
-
-dorsal_transform = transforms.Compose([
-    CustomDorsalTransform(),
-    transforms.ToTensor(),          # Converte le immagini in tensori
-])
-
-dataset = CustomImageDataset(image_dir='/home/mattpower/Downloads/Hands', data_structure = prepare_data(num_exp=1, num_train=5, num_test=5), id_exp=0, train_test='train', palmar_dorsal='dorsal', transform=[palmar_transform, dorsal_transform] )
-
-# Crea il DataLoader
-data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
-
-
-
+'''
 for data, target in iter(data_loader):
     print(f"Immagini: {data.shape}")  # Stampa la forma delle immagini (batch_size, canali, altezza, larghezza)
     print(f"Etichette: {target}")  # Stampa le etichette del batch
     # Uscita dal ciclo dopo il primo batch (puoi rimuovere questa linea se vuoi vedere più batch)
     break
 
-'''
+
 # Iterazione attraverso il DataLoader
 for images, labels in data_loader:
     print(images.shape)  # Dimensione del batch di immagini
