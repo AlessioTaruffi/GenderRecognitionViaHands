@@ -62,15 +62,15 @@ def prepare_data(num_exp: int, num_train: int, num_test: int):
     
     # Populate the data structure
     for indExp in range(num_exp):
-        print(f"Exp{indExp}")
+        #print(f"Exp{indExp}")
         data_structure[indExp] = {}
         df['check'] = False
-        print('\tTrain')
+        #print('\tTrain')
         data_structure[indExp]['train'], set1, val_est, df = prepare_data_train(num_train= num_train, df = df)
 
         #print(f"\n{df.loc[df['check'] == False, 'id'].unique()}\n")
         
-        print('\tTest')
+        #print('\tTest')
         data_structure[indExp]['test'], set2 = prepare_data_test(num_test= num_test, df=df)  
     '''
     #print(len(set1))
@@ -97,7 +97,7 @@ def prepare_data_train(num_train: int,  df: pd.DataFrame ):
         # Extract the person id without accessories
         person_id_no_accessories_list_gender =  df.loc[(df['accessories'] == 0) & (df['gender'] == gend), 'id'].unique()
 
-        print(f"\t\t{gend} Len persone Iniziale:{len(person_id_no_accessories_list_gender)}")
+        #print(f"\t\t{gend} Len persone Iniziale:{len(person_id_no_accessories_list_gender)}")
         for _ in range(num_train):
             '''
             # Il problema di questa cosa è che potresti non arrivare al numero di immagini richieste 
@@ -142,14 +142,14 @@ def prepare_data_train(num_train: int,  df: pd.DataFrame ):
                 Escludiamo le persone che non hanno più immagini di palmi e dorsi da estrarre
             '''
             if df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar')), 'check'].all() or df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal')), 'check'].all():
-                print(f"\t\t\t\tPersona esclusa:{person_id}")
+                #print(f"\t\t\t\tPersona esclusa:{person_id}")
                 person_id_no_accessories_list_gender = np.delete(person_id_no_accessories_list_gender, np.where(person_id_no_accessories_list_gender == person_id)[0])
             
             val_est.append(palmar_img)
             val_est.append(dorsal_img)
             settino.update(palmar_img) 
             settino.update(dorsal_img)  
-        print(f"\t\tLen persone Finale:{len(person_id_no_accessories_list_gender)}")
+        #print(f"\t\tLen persone Finale:{len(person_id_no_accessories_list_gender)}")
     return result_dict, settino, val_est, df
 
 def prepare_data_test(num_test: int, df: pd.DataFrame):
@@ -163,11 +163,13 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
     for gender in male_female_list:
 
         person_id_list = df.loc[(df['gender'] == gender), 'id'].unique()
+
+        '''
         if gender == 'female':
             print("Numero di femmine: " + str(len(person_id_list)))
         else:            
             print("Numero di maschi: " + str(len(person_id_list)))
-
+        '''
 
         for person_id in person_id_list:
             
@@ -177,7 +179,7 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
                 #print(f"\t\t\t\tPersona esclusa TRAINING:{person_id}")
                 person_id_list = np.delete(person_id_list, np.where(person_id_list == person_id)[0])
 
-        print(f"\t\t{gender} Len persone Iniziale:{len(person_id_list)}")
+        #print(f"\t\t{gender} Len persone Iniziale:{len(person_id_list)}")
         for _ in range(num_test):
             # Il problema di questa cosa è che potresti non arrivare al numero di immagini richieste 
             if len(person_id_list) == 0:
@@ -223,13 +225,13 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
             '''
 
             if df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar')), 'check'].all() or df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal')), 'check'].all():
-                print(f"\t\t\t\tPersona esclusa:{person_id}")
+                #print(f"\t\t\t\tPersona esclusa:{person_id}")
                 person_id_list = np.delete(person_id_list, np.where(person_id_list == person_id)[0])
 
             settino.update(palmar_img) 
             settino.update(dorsal_img)
 
-        print(f"\t\t{gender}Len persone Finale:{len(person_id_list)}")
+        #print(f"\t\t{gender}Len persone Finale:{len(person_id_list)}")
     return result_dict, settino
 
-prepare_data(10, 200, 100)
+prepare_data(10, 100, 50)

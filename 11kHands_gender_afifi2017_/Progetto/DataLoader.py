@@ -2,6 +2,7 @@ from torch.utils.data import Dataset
 import os
 from PIL import Image
 from torch.utils.data import Dataset
+import numpy as np
 
 # Classe per effettuare la creazione del dataset utilizzato per il training e test
 class CustomImageDataset(Dataset):
@@ -9,14 +10,23 @@ class CustomImageDataset(Dataset):
         """
             image_dir (str): Percorso della cartella contenente le immagini.
             json_file (str): Percorso del file JSON contenente le etichette.
-        """
-       # self.labels = 
-        if palmar_dorsal == 'dorsal':
-            self.image_filenames = data_structure[id_exp][train_test]['images'][1]
+        """       
+        self.labels = {}
+
+        if palmar_dorsal == 'dorsal':    
+            self.image_filenames = np.array([riga[1] for riga in data_structure[id_exp][train_test]['images']]).flatten()
         else: 
-            self.image_filenames = data_structure[id_exp][train_test]['images'][0]
-        print(len(self.image_filenames), len(data_structure[id_exp][train_test]['labels']))
-        self.labels = dict(zip(self.image_filenames , data_structure[id_exp][train_test]['labels']))
+            self.image_filenames = np.array([riga[0] for riga in data_structure[id_exp][train_test]['images']]).flatten()
+
+        #print(self.image_filenames)
+        #print(type(self.image_filenames))
+
+       # print(len(self.image_filenames), len(data_structure[id_exp][train_test]['labels']))
+        #self.labels = dict(zip(self.image_filenames , np.array( data_structure[id_exp][train_test]['labels'] ) ))
+
+        for x in range(0, len(self.image_filenames)):
+            self.labels[self.image_filenames[x]] = data_structure[id_exp][train_test]['labels'][x]
+        
         self.image_dir = image_dir
         # Da cambiare
         self.id_exp = id_exp
