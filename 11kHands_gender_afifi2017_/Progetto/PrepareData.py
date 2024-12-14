@@ -72,14 +72,6 @@ def prepare_data(num_exp: int, num_train: int, num_test: int):
         
         #print('\tTest')
         data_structure[indExp]['test'], set2 = prepare_data_test(num_test= num_test, df=df)  
-    '''
-    #print(len(set1))
-    print(len(val_est))
-    print(len(set2))
-    #print(set1)
-    #print(set2)
-    print(set1-set2)
-    '''
     return data_structure
 
 def prepare_data_train(num_train: int,  df: pd.DataFrame ):
@@ -181,9 +173,11 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
 
         #print(f"\t\t{gender} Len persone Iniziale:{len(person_id_list)}")
         for _ in range(num_test):
+            '''
             # Il problema di questa cosa è che potresti non arrivare al numero di immagini richieste 
             if len(person_id_list) == 0:
                 return result_dict, settino
+            '''
 
             person_id = np.random.choice(person_id_list)
             #print(f"\t\t\tPersona:{person_id}")

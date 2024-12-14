@@ -26,7 +26,7 @@ for param in alexNet.classifier[6].parameters():
     param.requires_grad = True
 
 # Da mettere prima di richiamare le classi (reti)
-data_struct = prepare_data(num_exp=10, num_train=200, num_test=100)
+data_struct = prepare_data(num_exp=5, num_train=50, num_test=1)
 
 def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, tot_exp: int, batch_size=32, weight_decay=5e-05, learning_rate=0.001):
     # USIAMO LE NOSTRE :)
@@ -54,7 +54,6 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
 
         # Crea il DataLoader
         data_loader_train = DataLoader(dataset_train, batch_size=batch_size, shuffle=True)
-
         net.train()
         running_loss = 0.0
         for _, data in enumerate(data_loader_train, 0):
@@ -99,16 +98,25 @@ def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, 
             for data in data_loader_test:
                 images, labels = data
                 images, labels = images.to(device), labels.to(device)
-
+                # Softmax layer
                 outputs = net(images)
+
+                print(dataset_test.image_filenames)
+                print(outputs.data)
+
+                # Classification layer
                 _, predicted = torch.max(outputs.data, 1)
+
+                print(predicted)
+                print(labels)
+
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-
     print(f'Accuracy on the test images: {100 * correct / total:.2f}%')
 
-trainingCNN(net=leNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands', palmar_dorsal='palmar', tot_exp=10)
-testCNN(net=leNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands',  palmar_dorsal='palmar', tot_exp=10)
 
-trainingCNN(net=alexNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands', palmar_dorsal='dorsal', tot_exp=10)
-testCNN(net=alexNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands',  palmar_dorsal='dorsal', tot_exp=10)
+#trainingCNN(net=leNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands', palmar_dorsal='palmar', tot_exp=5)
+#testCNN(net=leNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands',  palmar_dorsal='palmar', tot_exp=5)
+
+#trainingCNN(net=alexNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands', palmar_dorsal='dorsal', tot_exp=5)
+#testCNN(net=alexNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands',  palmar_dorsal='dorsal', tot_exp=5)
