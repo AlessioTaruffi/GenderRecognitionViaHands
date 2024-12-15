@@ -150,7 +150,7 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
         "images": []
     } 
     settino = set()
-    male_female_list = ['female', 'male']
+    male_female_list = ['male', 'female']
 
     for gender in male_female_list:
 

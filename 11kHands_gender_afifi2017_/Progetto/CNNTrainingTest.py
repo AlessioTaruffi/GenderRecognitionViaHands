@@ -1,32 +1,11 @@
+import numpy as np
 from torchvision import transforms
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
-import torchvision
-from MyLeNetCNN import MyLeNetCNN
 from torch.utils.data import DataLoader
 from CustomTransform import CustomDorsalTransform, CustomPalmTransform
-from DataLoader import CustomImageDataset
-from PrepareData import prepare_data
-
-
-leNet = MyLeNetCNN(num_classes=2)
-
-alexNet = torchvision.models.alexnet(weights=torchvision.models.AlexNet_Weights.IMAGENET1K_V1)
-
-# Update the final layer to output 2 classes
-num_features = alexNet.classifier[6].in_features
-alexNet.classifier[6] = nn.Linear(num_features, 2)
-
-# Freeze all layers except the newly added fully connected layer
-for param in alexNet.parameters():
-    param.requires_grad = False
-for param in alexNet.classifier[6].parameters():
-    param.requires_grad = True
-
-# Da mettere prima di richiamare le classi (reti)
-data_struct = prepare_data(num_exp=5, num_train=50, num_test=1)
+from CustomImageDataset import CustomImageDataset
 
 def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, tot_exp: int, batch_size=32, weight_decay=5e-05, learning_rate=0.001):
     # USIAMO LE NOSTRE :)
@@ -89,8 +68,9 @@ def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, 
     net.to(device)
 
     net.eval()
-    correct = 0
-    total = 0
+    tot_labels = torch.tensor([])
+    tot_predicted = torch.tensor([])
+        
     with torch.no_grad():
         for exp in range(tot_exp):
             dataset_test = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal=palmar_dorsal, transform=[palmar_transform, dorsal_transform] )
@@ -101,22 +81,10 @@ def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, 
                 # Softmax layer
                 outputs = net(images)
 
-                print(dataset_test.image_filenames)
-                print(outputs.data)
-
                 # Classification layer
                 _, predicted = torch.max(outputs.data, 1)
 
-                print(predicted)
-                print(labels)
+                tot_labels = torch.cat((tot_labels, labels))
+                tot_predicted = np.concatenate((tot_predicted, predicted))
 
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
-    print(f'Accuracy on the test images: {100 * correct / total:.2f}%')
-
-
-#trainingCNN(net=leNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands', palmar_dorsal='palmar', tot_exp=5)
-#testCNN(net=leNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands',  palmar_dorsal='palmar', tot_exp=5)
-
-#trainingCNN(net=alexNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands', palmar_dorsal='dorsal', tot_exp=5)
-#testCNN(net=alexNet, data_struct=data_struct, image_path='/home/mattpower/Downloads/Hands',  palmar_dorsal='dorsal', tot_exp=5)
+    return tot_labels, tot_predicted
