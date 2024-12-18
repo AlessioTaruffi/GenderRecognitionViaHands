@@ -11,7 +11,7 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
     # USIAMO LE NOSTRE :)
     # Definisci le trasformazioni da applicare alle immagini (opzionale)
     palmar_transform = transforms.Compose([
-        CustomPalmTransform(),
+        CustomDorsalTransform(),
         transforms.ToTensor(),          # Converte le immagini in tensori
     ])
 
@@ -54,7 +54,7 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
 def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, tot_exp: int, batch_size=32):
     # Definisci le trasformazioni da applicare alle immagini (opzionale)
     palmar_transform = transforms.Compose([
-        CustomPalmTransform(),
+        CustomDorsalTransform(),
         transforms.ToTensor(),          # Converte le immagini in tensori
     ])
 

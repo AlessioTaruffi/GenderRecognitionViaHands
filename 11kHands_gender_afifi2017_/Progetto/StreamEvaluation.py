@@ -9,7 +9,7 @@ from CustomImageDataset import CustomImageDataset
 def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_path:str, tot_exp: int, batch_size=32):
     # Definisci le trasformazioni da applicare alle immagini (opzionale)
     palmar_transform = transforms.Compose([
-        CustomPalmTransform(),
+        CustomDorsalTransform(),
         transforms.ToTensor(),          # Converte le immagini in tensori
     ])
 
@@ -47,8 +47,8 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_pat
                 palmar_images, labels = palmar_images.to(device), labels.to(device)
                 
                 # Softmax layer
-                outputs_leNet = net1(palmar_images)
-                outputs_alexNet = net2(dorsal_images)
+                outputs_alexNetPalmar = net1(palmar_images)
+                outputs_alexNetDorsal = net2(dorsal_images)
 
                 # Score fusion layer
                 #output_M = outputs_leNet[1] * 0.6  + outputs_alexNet[1] * 0.4
@@ -56,11 +56,11 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_pat
 
                 # Applica la softmax agli output per ottenere le probabilità
                 softmax = torch.nn.Softmax(dim=1)
-                probs_leNet = softmax(outputs_leNet)
-                probs_alexNet = softmax(outputs_alexNet)
+                probs_alexNetPalmar = softmax(outputs_alexNetPalmar)
+                probs_alexNetDorsal = softmax(outputs_alexNetDorsal)
     
                 # Esegui la score fusion combinando le probabilità
-                fused_probs = probs_leNet * 0.6 + probs_alexNet * 0.4
+                fused_probs = probs_alexNetPalmar * 0.7 + probs_alexNetDorsal * 0.3
     
                 # Ottieni la previsione finale
                 _, predicted = torch.max(fused_probs, 1)

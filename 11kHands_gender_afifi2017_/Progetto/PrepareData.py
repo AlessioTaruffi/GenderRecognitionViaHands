@@ -4,7 +4,7 @@ import json
 
 def prepare_dataOld(num_exp: int, num_train: int, num_test: int):
     # Load the data
-    df = pd.read_csv('./Progetto/HandInfo.csv')
+    df = pd.read_csv('/Users/Candita/Desktop/ComputerScience/FDS/GenderRecognitionViaHands/11kHands_gender_afifi2017_/Progetto/HandInfo.csv')
 
     #print(len(df_palmar))
     #print(len(df_dorsal))
@@ -52,7 +52,7 @@ Il numero di immagini estratte per il testing e il test è errato -> porta a 100
 '''
 def prepare_data(num_exp: int, num_train: int, num_test: int):
     # Load the data from csv metadata file
-    df = pd.read_csv('./Progetto/HandInfo.csv')
+    df = pd.read_csv('/Users/Candita/Desktop/ComputerScience/FDS/GenderRecognitionViaHands/11kHands_gender_afifi2017_/Progetto/HandInfo.csv')
     # Create a data structure to store the images' name and the corresponding label
     data_structure = {}
     train_test_list = ['train', 'test']

@@ -7,12 +7,12 @@ from PerformanceEvaluation import *
 from StreamEvaluation import streamEvaluation
 
 # Set number of experiments
-num_exp = 5
-image_path = '/home/mattpower/Downloads/Hands'
-num_train = 50
-num_test = 1
+num_exp = 20
+image_path = '/Users/Candita/Desktop/ComputerScience/FDS/Hands'
+num_train = 100
+num_test = 50
 
-leNet = MyLeNetCNN(num_classes=2)
+#leNet = MyLeNetCNN(num_classes=2)
 alexNet = torchvision.models.alexnet(weights=torchvision.models.AlexNet_Weights.IMAGENET1K_V1)
 
 # Update the final layer to output 2 classes
@@ -29,16 +29,16 @@ for param in alexNet.classifier[6].parameters():
 data_struct = prepare_data(num_exp=num_exp, num_train=num_train, num_test=num_test)
 
 # Training the networks
-trainingCNN(net=leNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='palmar', tot_exp=num_exp)
+trainingCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='palmar', tot_exp=num_exp)
 trainingCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='dorsal', tot_exp=num_exp)
 
 # Test the networks
-ln_labels, ln_predicted = testCNN(net=leNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='palmar', tot_exp=num_exp)
+ln_labels, ln_predicted = testCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='palmar', tot_exp=num_exp)
 an_labels, an_predicted = testCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='dorsal', tot_exp=num_exp)
 
 # Evaluate the unified network
 print("Addestramento Reti Neurali Concluso")
-un_labels, un_predicted = streamEvaluation(net1=leNet, net2=alexNet, data_struct=data_struct, image_path=image_path, tot_exp=num_exp)
+un_labels, un_predicted = streamEvaluation(net1=alexNet, net2=alexNet, data_struct=data_struct, image_path=image_path, tot_exp=num_exp)
 
 # Performance evaluation
 calculate_confusion_matrix(ln_labels, ln_predicted)

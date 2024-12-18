@@ -27,9 +27,11 @@ def preProcessingPalm(image: np.ndarray):
     # Normalized the image
     normalizedImage = imageNormalization(contrastImage)
     # Image resize for LeNet standard size
-    resizedImage = cv2.resize(normalizedImage, (32,32))
+    resizedImage = cv2.resize(normalizedImage, (224,224))
+    # Convert the grayscale image back to RGB
+    rgbImage = cv2.cvtColor(resizedImage, cv2.COLOR_GRAY2RGB)
     # Restore the original image pixel value -> NECESSARIO ORA? 
-    finalImage = restoreOriginalPixelValue(resizedImage)
+    finalImage = restoreOriginalPixelValue(rgbImage)
     return finalImage
 
 # To pre process dorsal image
