@@ -7,8 +7,8 @@ from PerformanceEvaluation import *
 from StreamEvaluation import streamEvaluation
 
 # Set number of experiments
-num_exp = 20
-image_path = '/Users/Candita/Desktop/ComputerScience/FDS/Hands'
+num_exp = 10
+image_path = '/home/mattpower/Downloads/Hands'
 num_train = 100
 num_test = 50
 

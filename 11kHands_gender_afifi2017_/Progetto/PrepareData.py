@@ -52,7 +52,7 @@ Il numero di immagini estratte per il testing e il test è errato -> porta a 100
 '''
 def prepare_data(num_exp: int, num_train: int, num_test: int):
     # Load the data from csv metadata file
-    df = pd.read_csv('/Users/Candita/Desktop/ComputerScience/FDS/GenderRecognitionViaHands/11kHands_gender_afifi2017_/Progetto/HandInfo.csv')
+    df = pd.read_csv('./Progetto/HandInfo.csv')
     # Create a data structure to store the images' name and the corresponding label
     data_structure = {}
     train_test_list = ['train', 'test']
@@ -85,9 +85,12 @@ def prepare_data_train(num_train: int,  df: pd.DataFrame ):
     #person_id_no_accessories_list = df.loc[df['accessories'] == 0, 'id'].unique()
     gender = ['male',  'female']
 
+    print("Training")
+
     for gend in gender:
         # Extract the person id without accessories
-        person_id_no_accessories_list_gender =  df.loc[(df['accessories'] == 0) & (df['gender'] == gend), 'id'].unique()
+        #person_id_no_accessories_list_gender =  df.loc[(df['accessories'] == 0) & (df['gender'] == gend), 'id'].unique()
+        person_id_list = df.loc[(df['gender'] == gend), 'id'].unique()
 
         #print(f"\t\t{gend} Len persone Iniziale:{len(person_id_no_accessories_list_gender)}")
         for _ in range(num_train):
@@ -98,7 +101,25 @@ def prepare_data_train(num_train: int,  df: pd.DataFrame ):
             '''
 
             # Extract a person id
-            person_id = np.random.choice(person_id_no_accessories_list_gender)
+            #person_id = np.random.choice(person_id_no_accessories_list_gender)
+            for i in range(0, len(person_id_list)):
+                person_id = np.random.choice(person_id_list)
+
+                #print(df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar'))&(df['accessories'] == 0), 'check'].all() and df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal'))&(df['accessories'] == 0), 'check'].all() )
+
+                '''
+                    Escludiamo le persone che non hanno più immagini di palmi e dorsi da estrarre
+                '''
+                if (len(df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar'))&(df['accessories'] == 0)]) == 0 or len(df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal'))&(df['accessories'] == 0)]) == 0
+                        ) or (
+                    df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar'))&(df['accessories'] == 0), 'check'].all() or df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal'))&(df['accessories'] == 0), 'check'].all()): 
+                    print(f"\t\tPersona scartata:{person_id}")
+                    person_id_list = np.delete(person_id_list, np.where(person_id_list == person_id)[0])
+                    continue 
+                else:
+                    #print(f"\tPersona presa:{person_id}")
+                    break
+            
             #print(f"\t\t\tPersona:{person_id}")
 
             '''
@@ -115,8 +136,8 @@ def prepare_data_train(num_train: int,  df: pd.DataFrame ):
             Scegliamo in modo casuale un palmo e una mano
             Con check == True l'immagine viene esclusa perchè già presa 
             '''  
-            palmar_img = df.loc[(df["id"] == person_id)&(df["aspectOfHand"].str.contains("palmar"))&(df["check"] == False),'imageName'].sample(n=1, replace=False).to_list()
-            dorsal_img = df.loc[(df["id"] == person_id)&(df["aspectOfHand"].str.contains("dorsal"))&(df["check"] == False),'imageName'].sample(n=1, replace=False).to_list()
+            palmar_img = df.loc[(df["id"] == person_id)&(df["aspectOfHand"].str.contains("palmar"))&(df['accessories'] == 0)&(df["check"] == False),'imageName'].sample(n=1, replace=False).to_list()
+            dorsal_img = df.loc[(df["id"] == person_id)&(df["aspectOfHand"].str.contains("dorsal"))&(df['accessories'] == 0)&(df["check"] == False),'imageName'].sample(n=1, replace=False).to_list()
             
             # Set the check to 1
             '''
@@ -130,13 +151,10 @@ def prepare_data_train(num_train: int,  df: pd.DataFrame ):
 
             result_dict["images"].append([palmar_img, dorsal_img])
 
-            '''
-                Escludiamo le persone che non hanno più immagini di palmi e dorsi da estrarre
-            '''
-            if df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar')), 'check'].all() or df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal')), 'check'].all():
-                #print(f"\t\t\t\tPersona esclusa:{person_id}")
-                person_id_no_accessories_list_gender = np.delete(person_id_no_accessories_list_gender, np.where(person_id_no_accessories_list_gender == person_id)[0])
-            
+           
+            # person_id_no_accessories_list_gender = np.delete(person_id_no_accessories_list_gender, np.where(person_id_no_accessories_list_gender == person_id)[0])
+                
+
             val_est.append(palmar_img)
             val_est.append(dorsal_img)
             settino.update(palmar_img) 
@@ -151,6 +169,8 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
     } 
     settino = set()
     male_female_list = ['male', 'female']
+
+    print("Testing")
 
     for gender in male_female_list:
 
@@ -167,8 +187,9 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
             
             #print(str( df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar'))])  + " " + str( df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar')),'check'].any() ) )
             #print(str( df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal'))])  + " " + str( df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal')), 'check'].any() ) )
-            if df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar')), 'check'].any() and df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal')), 'check'].any():
+            if df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('palmar')), 'check'].all() or df.loc[(df['id'] == person_id) & (df['aspectOfHand'].str.contains('dorsal')), 'check'].all():
                 #print(f"\t\t\t\tPersona esclusa TRAINING:{person_id}")
+                print(f"\t\tPersona scartata:{person_id}")
                 person_id_list = np.delete(person_id_list, np.where(person_id_list == person_id)[0])
 
         #print(f"\t\t{gender} Len persone Iniziale:{len(person_id_list)}")
@@ -228,4 +249,4 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
         #print(f"\t\t{gender}Len persone Finale:{len(person_id_list)}")
     return result_dict, settino
 
-prepare_data(10, 100, 50)
+#prepare_data(10, 100, 50)
