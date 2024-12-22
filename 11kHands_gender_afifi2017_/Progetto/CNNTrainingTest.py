@@ -27,6 +27,8 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=learning_rate, weight_decay=weight_decay)
 
+    loss_values = []
+
     for exp in range(tot_exp):
         #print(exp)
         dataset_train = CustomImageDataset(image_dir=image_path, data_structure = data_struct, id_exp=exp, train_test='train', palmar_dorsal=palmar_dorsal, transform=[palmar_transform, dorsal_transform] )
@@ -47,9 +49,13 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
 
             running_loss += loss.item()
 
+            loss_values.append(running_loss / len(data_loader_train))
+
+
         print(f'Epoch {exp + 1}, Loss: {running_loss / len(data_loader_train):.4f}')
 
     print('Finished Training')
+    return loss_values
 
 def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, tot_exp: int, batch_size=32):
     # Definisci le trasformazioni da applicare alle immagini (opzionale)

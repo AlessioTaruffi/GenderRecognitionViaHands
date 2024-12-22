@@ -7,10 +7,10 @@ from PerformanceEvaluation import *
 from StreamEvaluation import streamEvaluation
 
 # Set number of experiments
-num_exp = 10
+num_exp = 5
 image_path = '/home/mattpower/Downloads/Hands'
-num_train = 100
-num_test = 50
+num_train = 20
+num_test = 10
 
 #leNet = MyLeNetCNN(num_classes=2)
 alexNet = torchvision.models.alexnet(weights=torchvision.models.AlexNet_Weights.IMAGENET1K_V1)
@@ -29,8 +29,8 @@ for param in alexNet.classifier[6].parameters():
 data_struct = prepare_data(num_exp=num_exp, num_train=num_train, num_test=num_test)
 
 # Training the networks
-trainingCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='palmar', tot_exp=num_exp)
-trainingCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='dorsal', tot_exp=num_exp)
+train_loss_p = trainingCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='palmar', tot_exp=num_exp)
+train_loss_d = trainingCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='dorsal', tot_exp=num_exp)
 
 # Test the networks
 ln_labels, ln_predicted = testCNN(net=alexNet, data_struct=data_struct, image_path=image_path, palmar_dorsal='palmar', tot_exp=num_exp)
@@ -45,6 +45,16 @@ calculate_confusion_matrix(ln_labels, ln_predicted)
 calculate_confusion_matrix(an_labels, an_predicted)
 calculate_confusion_matrix(un_labels, un_predicted)
 
+# Calculate the loss plot
+calculate_loss_plot(train_loss_p)
+calculate_loss_plot(train_loss_d)
+
+# Calculate the accuracy plot
+calculate_accuracy_plot(ln_labels, ln_predicted)
+calculate_accuracy_plot(an_labels, an_predicted)
+calculate_accuracy_plot(un_labels, un_predicted)
+
+# Print the performance metrics
 print("\nAccuracy LeNet: ", calculate_accuracy(ln_labels, ln_predicted))
 print("Precision LeNet: ", calculate_precision(ln_labels, ln_predicted))
 print("Recall LeNet: ", calculate_recall(ln_labels, ln_predicted))

@@ -58,3 +58,30 @@ def calculate_recall(y_pred, y_true):
     recall = TP / (TP + FN)
 
     return recall
+
+def calculate_loss_plot(train_loss):
+    epochs = range(1, len(train_loss) + 1)
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(epochs, train_loss, 'bo-', label='Training loss')
+    plt.title('Training Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
+
+def calculate_accuracy_plot(tot_labels, predicted_labels):
+    test_accuracy = []
+
+    for i in range(len(tot_labels)):
+        test_accuracy.append((tot_labels[0:i+1] == predicted_labels[0:i+1]).sum().item() / len(tot_labels[0:i+1]))
+
+    epochs = range(1, len(test_accuracy) + 1)
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(epochs, test_accuracy, 'ro-', label='Test accuracy')
+    plt.title('Test Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()
