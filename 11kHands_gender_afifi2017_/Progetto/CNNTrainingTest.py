@@ -49,7 +49,7 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
 
             running_loss += loss.item()
 
-            loss_values.append(running_loss / len(data_loader_train))
+        loss_values.append(running_loss / len(data_loader_train))
 
 
         print(f'Epoch {exp + 1}, Loss: {running_loss / len(data_loader_train):.4f}')
@@ -76,7 +76,8 @@ def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, 
     net.eval()
     tot_labels = torch.tensor([])
     tot_predicted = torch.tensor([])
-        
+
+
     with torch.no_grad():
         for exp in range(tot_exp):
             dataset_test = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal=palmar_dorsal, transform=[palmar_transform, dorsal_transform] )
@@ -92,5 +93,6 @@ def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, 
 
                 tot_labels = torch.cat((tot_labels, labels))
                 tot_predicted = np.concatenate((tot_predicted, predicted))
+
 
     return tot_labels, tot_predicted

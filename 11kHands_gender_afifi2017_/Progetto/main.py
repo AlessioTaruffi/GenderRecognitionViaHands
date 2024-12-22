@@ -7,16 +7,16 @@ from PerformanceEvaluation import *
 from StreamEvaluation import streamEvaluation
 
 # Set number of experiments
-num_exp = 5
-image_path = '/home/mattpower/Downloads/Hands'
-num_train = 20
-num_test = 10
+num_exp = 10
+image_path = 'D:\\Users\\Patrizio\\Desktop\\Hands'
+num_train = 200
+num_test = 100
 
 #leNet = MyLeNetCNN(num_classes=2)
 alexNet = torchvision.models.alexnet(weights=torchvision.models.AlexNet_Weights.IMAGENET1K_V1)
 
 # Update the final layer to output 2 classes
-num_features = alexNet.classifier[6].in_features
+num_features = alexNet.classifier[6]. in_features
 alexNet.classifier[6] = nn.Linear(num_features, 2)
 
 # Freeze all layers except the newly added fully connected layer
@@ -38,7 +38,7 @@ an_labels, an_predicted = testCNN(net=alexNet, data_struct=data_struct, image_pa
 
 # Evaluate the unified network
 print("Addestramento Reti Neurali Concluso")
-un_labels, un_predicted = streamEvaluation(net1=alexNet, net2=alexNet, data_struct=data_struct, image_path=image_path, tot_exp=num_exp)
+un_labels, un_predicted  = streamEvaluation(net1=alexNet, net2=alexNet, data_struct=data_struct, image_path=image_path, tot_exp=num_exp)
 
 # Performance evaluation
 calculate_confusion_matrix(ln_labels, ln_predicted)
@@ -50,9 +50,9 @@ calculate_loss_plot(train_loss_p)
 calculate_loss_plot(train_loss_d)
 
 # Calculate the accuracy plot
-calculate_accuracy_plot(ln_labels, ln_predicted)
-calculate_accuracy_plot(an_labels, an_predicted)
-calculate_accuracy_plot(un_labels, un_predicted)
+#calculate_accuracy_plot(ln_his_labels, ln_his_predicted)
+#calculate_accuracy_plot(an_his_labels, an_his_predicted)
+#calculate_accuracy_plot(un_his_label, un_his_predicted)
 
 # Print the performance metrics
 print("\nAccuracy LeNet: ", calculate_accuracy(ln_labels, ln_predicted))

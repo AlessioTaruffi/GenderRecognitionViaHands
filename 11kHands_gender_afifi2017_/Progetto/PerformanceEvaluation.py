@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def calculate_accuracy(y_pred, y_true):
-    return (y_pred == y_true).sum().item() / len(y_true)
+    cm = confusion_matrix(y_true, y_pred)
+    #return (y_pred == y_true).sum().item() / len(y_true)
+    return cm[1,1] /len(y_true)
 
 def calculate_confusion_matrix(y_pred, y_true):
     # Calcola la confusion matrix
@@ -70,12 +72,18 @@ def calculate_loss_plot(train_loss):
     plt.legend()
     plt.show()
 
+
+'''
+Not working :(
 def calculate_accuracy_plot(tot_labels, predicted_labels):
     test_accuracy = []
-
+    print(tot_labels)
+    print("\n")
+    print(predicted_labels)
     for i in range(len(tot_labels)):
-        test_accuracy.append((tot_labels[0:i+1] == predicted_labels[0:i+1]).sum().item() / len(tot_labels[0:i+1]))
-
+       # test_accuracy.append((tot_labels[0:i+1] == predicted_labels[0:i+1]).sum().item() / len(tot_labels[0:i+1]))
+        cm = confusion_matrix(tot_labels[i], tot_labels[i])
+        test_accuracy.append(cm[1,1] /len(tot_labels[i]))
     epochs = range(1, len(test_accuracy) + 1)
 
     plt.figure(figsize=(10, 5))
@@ -85,3 +93,4 @@ def calculate_accuracy_plot(tot_labels, predicted_labels):
     plt.ylabel('Accuracy')
     plt.legend()
     plt.show()
+'''

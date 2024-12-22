@@ -30,6 +30,7 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_pat
     tot_labels = torch.tensor([])
     tot_predicted = torch.tensor([])
 
+
     with torch.no_grad():
         for exp in range(tot_exp):
             dataset_dorsal = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal='dorsal', transform=[palmar_transform, dorsal_transform] )
