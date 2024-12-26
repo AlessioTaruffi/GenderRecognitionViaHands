@@ -1,12 +1,10 @@
-import torch
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 def calculate_accuracy(y_pred, y_true):
     cm = confusion_matrix(y_true, y_pred)
-    #return (y_pred == y_true).sum().item() / len(y_true)
-    return cm[1,1] /len(y_true)
+    return (cm[1,1] + cm[0,0])/len(y_true)
 
 def calculate_confusion_matrix(y_pred, y_true):
     # Calcola la confusion matrix

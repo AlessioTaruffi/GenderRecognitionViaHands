@@ -51,17 +51,13 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_pat
                 outputs_alexNetPalmar = net1(palmar_images)
                 outputs_alexNetDorsal = net2(dorsal_images)
 
-                # Score fusion layer
-                #output_M = outputs_leNet[1] * 0.6  + outputs_alexNet[1] * 0.4
-                #output_F = outputs_leNet[0] * 0.6  + outputs_alexNet[0] * 0.4
-
                 # Applica la softmax agli output per ottenere le probabilità
                 softmax = torch.nn.Softmax(dim=1)
                 probs_alexNetPalmar = softmax(outputs_alexNetPalmar)
                 probs_alexNetDorsal = softmax(outputs_alexNetDorsal)
     
                 # Esegui la score fusion combinando le probabilità
-                fused_probs = probs_alexNetPalmar * 0.7 + probs_alexNetDorsal * 0.3
+                fused_probs = probs_alexNetPalmar * 0.3 + probs_alexNetDorsal * 0.7
     
                 # Ottieni la previsione finale
                 _, predicted = torch.max(fused_probs, 1)
@@ -69,19 +65,4 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_pat
                 tot_labels = torch.cat((tot_labels, labels))
                 tot_predicted = torch.cat((tot_predicted, predicted))
 
-                '''
-                # Etichette reali e predette
-                y_true = [1, 0, 1, 1, 0, 1, 0, 0]  # Valori reali
-                y_pred = [1, 0, 0, 1, 0, 1, 1, 0]  # Valori predetti
-
-                # Calcolo della matrice di confusione
-                cm = confusion_matrix(y_true, y_pred)
-
-                print("Confusion Matrix:\n", cm)
-                Significato della matrice:
-                TP (Vero Positivo): 3 (le predizioni di classe "1" corrette)
-                TN (Vero Negativo): 3 (le predizioni di classe "0" corrette)
-                FP (Falso Positivo): 1 (ha predetto "1" quando il vero valore era "0")
-                FN (Falso Negativo): 1 (ha predetto "0" quando il vero valore era "1")
-                '''
     return tot_labels, tot_predicted

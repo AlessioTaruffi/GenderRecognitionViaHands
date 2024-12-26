@@ -28,11 +28,6 @@ class CustomImageDataset(Dataset):
             self.labels[self.image_filenames[x]] = data_structure[id_exp][train_test]['labels'][x]
         
         self.image_dir = image_dir
-        # Da cambiare
-        self.id_exp = id_exp
-        self.train_test = train_test
-        self.palmar_dorsal = palmar_dorsal
-        self.transform = transform
 
     def __len__(self):
         """Restituisce il numero di campioni nel dataset."""

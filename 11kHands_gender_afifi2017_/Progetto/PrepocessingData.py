@@ -50,9 +50,4 @@ def preProcessingDorsal(image: np.ndarray):
     finalImage = restoreOriginalPixelValue(resizedImage)
     return finalImage
 
-image = cv2.imread(r"./test/f_p.jpg")
-cv2.imwrite("risultato.jpg", image)
-processed_image = preProcessingData(image, "palmar")
-cv2.imwrite("risultato.jpg", processed_image)
-
 

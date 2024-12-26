@@ -50,8 +50,6 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
             running_loss += loss.item()
 
         loss_values.append(running_loss / len(data_loader_train))
-
-
         print(f'Epoch {exp + 1}, Loss: {running_loss / len(data_loader_train):.4f}')
 
     print('Finished Training')
