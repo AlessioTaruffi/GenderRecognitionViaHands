@@ -28,7 +28,7 @@ class CustomAlexNetTransform:
 
 class CustomLeNetTransform:
     def __call__(self, pil_image):
-         # Convert PIL -> RGB -> NumPy
+        # Convert PIL -> RGB -> NumPy
         pil_image = pil_image.convert('RGB')
         np_image = np.array(pil_image, dtype=np.uint8)
 

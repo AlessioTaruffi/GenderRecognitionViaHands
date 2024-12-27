@@ -9,32 +9,44 @@ from CustomTransform import buildAlexNetTransformations, buildLeNetTransformatio
 
 
 # Set number of experiments
-num_exp = 2
+num_exp = 10
 image_path = '/home/mattpower/Downloads/Hands'
 csv_path = '/home/mattpower/Documents/backup/Magistrale/Sapienza/ComputerScience/FDS/SecretProject/GenderRecognitionViaHands/11kHands_gender_afifi2017_/Progetto/HandInfo.csv'
-num_train = 20
-num_test = 5
+num_train = 200
+num_test = 50
 
 # Create the networks
 leNet = MyLeNetCNN(num_classes=2)
-alexNet = torchvision.models.alexnet(weights=torchvision.models.AlexNet_Weights.IMAGENET1K_V1)
+alexNet1 = torchvision.models.alexnet(weights=torchvision.models.AlexNet_Weights.IMAGENET1K_V1)
+alexNet2 = torchvision.models.alexnet(weights=torchvision.models.AlexNet_Weights.IMAGENET1K_V1)
 
-net_palmar = leNet
-net_dorsal = alexNet
+# Customize AlexNet1
+# Update the final layer to output 2 classes
+num_features = alexNet1.classifier[6].in_features
+alexNet1.classifier[6] = nn.Linear(num_features, 2)
+
+# Freeze all layers except the newly added fully connected layer
+for param in alexNet1.parameters():
+    param.requires_grad = False
+for param in alexNet1.classifier[6].parameters():
+    param.requires_grad = True
+
+# Customize AlexNet2
+# Update the final layer to output 2 classes
+num_features = alexNet2.classifier[6].in_features
+alexNet2.classifier[6] = nn.Linear(num_features, 2)
+
+# Freeze all layers except the newly added fully connected layer
+for param in alexNet2.parameters():
+    param.requires_grad = False
+for param in alexNet2.classifier[6].parameters():
+    param.requires_grad = True
+
+net_palmar = alexNet1
+net_dorsal = alexNet2
 
 weight_palmar = 0.4
 weight_dorsal = 0.6
-
-# Customize AlexNet
-# Update the final layer to output 2 classes
-num_features = alexNet.classifier[6]. in_features
-alexNet.classifier[6] = nn.Linear(num_features, 2)
-
-# Freeze all layers except the newly added fully connected layer
-for param in alexNet.parameters():
-    param.requires_grad = False
-for param in alexNet.classifier[6].parameters():
-    param.requires_grad = True
 
 # Build the tranformations
 palmar_transforms = buildAlexNetTransformations()
@@ -51,7 +63,7 @@ elif isinstance(net_dorsal, torchvision.models.AlexNet):
 
 transforms = [
     palmar_transforms,
-    dorsal_transforms,
+    dorsal_transforms
 ]
 
 # Weights for the fusion
@@ -81,7 +93,7 @@ print("Begin Unified Network Testing")
 un_labels, un_predicted  = streamEvaluation(net1=net_palmar, net2=net_dorsal, transforms=transforms, weights_palmar_dorsal=weights_palmar_dorsal, data_struct=data_struct, image_path=image_path, tot_exp=num_exp)
 print("Finished Unified Network Testing\n")
 
-'''
+
 # Performance evaluation
 calculate_confusion_matrix(palmar_labels, palmar_predicted)
 calculate_confusion_matrix(dorsal_labels, dorsal_predicted)
@@ -90,7 +102,7 @@ calculate_confusion_matrix(un_labels, un_predicted)
 # Calculate the loss plot
 calculate_loss_plot(train_loss_p)
 calculate_loss_plot(train_loss_d)
-'''
+
 
 # Calculate the accuracy plot
 #calculate_accuracy_plot(ln_his_labels, ln_his_predicted)
