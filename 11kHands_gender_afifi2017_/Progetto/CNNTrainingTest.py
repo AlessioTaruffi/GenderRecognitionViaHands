@@ -1,25 +1,11 @@
 import numpy as np
-from torchvision import transforms
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from CustomTransform import CustomDorsalTransform, CustomPalmTransform
 from CustomImageDataset import CustomImageDataset
 
-def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, tot_exp: int, batch_size=32, weight_decay=5e-05, learning_rate=0.001):
-    # USIAMO LE NOSTRE :)
-    # Definisci le trasformazioni da applicare alle immagini (opzionale)
-    palmar_transform = transforms.Compose([
-        CustomDorsalTransform(),
-        transforms.ToTensor(),          # Converte le immagini in tensori
-    ])
-
-    dorsal_transform = transforms.Compose([
-        CustomDorsalTransform(),
-        transforms.ToTensor(),          # Converte le immagini in tensori
-    ])
-
+def trainingCNN(net:nn.Module, transforms:list, data_struct:dict, image_path:str, palmar_dorsal:str, tot_exp: int, batch_size=32, weight_decay=5e-05, learning_rate=0.001):
     # Move the model to the appropriate device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     net.to(device)
@@ -31,10 +17,10 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
 
     for exp in range(tot_exp):
         #print(exp)
-        dataset_train = CustomImageDataset(image_dir=image_path, data_structure = data_struct, id_exp=exp, train_test='train', palmar_dorsal=palmar_dorsal, transform=[palmar_transform, dorsal_transform] )
+        dataset_train = CustomImageDataset(image_dir=image_path, data_structure = data_struct, id_exp=exp, train_test='train', palmar_dorsal=palmar_dorsal, transform=transforms)
 
         # Crea il DataLoader
-        data_loader_train = DataLoader(dataset_train, batch_size=batch_size, shuffle=True)
+        data_loader_train = DataLoader(dataset_train, batch_size=batch_size, shuffle=False)
         net.train()
         running_loss = 0.0
         for _, data in enumerate(data_loader_train, 0):
@@ -51,22 +37,9 @@ def trainingCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:s
 
         loss_values.append(running_loss / len(data_loader_train))
         print(f'Epoch {exp + 1}, Loss: {running_loss / len(data_loader_train):.4f}')
-
-    print('Finished Training')
     return loss_values
 
-def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, tot_exp: int, batch_size=32):
-    # Definisci le trasformazioni da applicare alle immagini (opzionale)
-    palmar_transform = transforms.Compose([
-        CustomDorsalTransform(),
-        transforms.ToTensor(),          # Converte le immagini in tensori
-    ])
-
-    dorsal_transform = transforms.Compose([
-        CustomDorsalTransform(),
-        transforms.ToTensor(),          # Converte le immagini in tensori
-    ])
-
+def testCNN(net:nn.Module, transforms:list, data_struct:dict, image_path:str, palmar_dorsal:str, tot_exp: int, batch_size=32):
     # Move the model to the appropriate device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     net.to(device)
@@ -78,8 +51,8 @@ def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, 
 
     with torch.no_grad():
         for exp in range(tot_exp):
-            dataset_test = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal=palmar_dorsal, transform=[palmar_transform, dorsal_transform] )
-            data_loader_test = DataLoader(dataset_test, batch_size=batch_size, shuffle=True)
+            dataset_test = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal=palmar_dorsal, transform=transforms)
+            data_loader_test = DataLoader(dataset_test, batch_size=batch_size, shuffle=False)
             for data in data_loader_test:
                 images, labels = data
                 images, labels = images.to(device), labels.to(device)
@@ -91,6 +64,5 @@ def testCNN(net:nn.Module, data_struct:dict, image_path:str, palmar_dorsal:str, 
 
                 tot_labels = torch.cat((tot_labels, labels))
                 tot_predicted = np.concatenate((tot_predicted, predicted))
-
 
     return tot_labels, tot_predicted

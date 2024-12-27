@@ -1,19 +1,23 @@
 import pandas as pd
 import numpy as np
 
-def prepare_data(num_exp: int, num_train: int, num_test: int):
+def prepare_data(csv_path:str, num_exp: int, num_train: int, num_test: int):
     # Load the data from csv metadata file
-    df = pd.read_csv('.\\11kHands_gender_afifi2017_\Progetto\HandInfo.csv')
+    df = pd.read_csv(csv_path)
     # Create a data structure to store the images' name and the corresponding label
     data_structure = {}
     
+    print("Preparing Data\n")
+
     # Populate the data structure
     for indExp in range(num_exp):
-        print(f"Exp{indExp}")
+        print(f"\tExp {indExp}")
         data_structure[indExp] = {}
         df['check'] = False
         data_structure[indExp]['train'], df = prepare_data_train(num_train= num_train, df = df)
         data_structure[indExp]['test']= prepare_data_test(num_test= num_test, df=df)  
+    
+    print("Data Preparation Completed\n")
     return data_structure
 
 def prepare_data_train(num_train: int,  df: pd.DataFrame ):
@@ -24,7 +28,7 @@ def prepare_data_train(num_train: int,  df: pd.DataFrame ):
     
     gender = ['male',  'female']
 
-    print("Training")
+    print("\t\tTraining")
 
     for gend in gender:
         # Extract the person id without accessories
@@ -71,7 +75,6 @@ def prepare_data_train(num_train: int,  df: pd.DataFrame ):
             df.loc[(df["imageName"] == dorsal_img[0]),'check'] = True
 
             result_dict["images"].append([palmar_img, dorsal_img])
-
     return result_dict, df
 
 def prepare_data_test(num_test: int, df: pd.DataFrame):
@@ -82,7 +85,7 @@ def prepare_data_test(num_test: int, df: pd.DataFrame):
     
     male_female_list = ['male', 'female']
 
-    print("Testing")
+    print("\t\tTesting\n")
 
     for gender in male_female_list:
         person_id_list = df.loc[(df['gender'] == gender), 'id'].unique()

@@ -18,16 +18,12 @@ class CustomImageDataset(Dataset):
         else: 
             self.image_filenames = np.array([riga[0] for riga in data_structure[id_exp][train_test]['images']]).flatten()
 
-        #print(self.image_filenames)
-        #print(type(self.image_filenames))
-
-       # print(len(self.image_filenames), len(data_structure[id_exp][train_test]['labels']))
-        #self.labels = dict(zip(self.image_filenames , np.array( data_structure[id_exp][train_test]['labels'] ) ))
-
         for x in range(0, len(self.image_filenames)):
             self.labels[self.image_filenames[x]] = data_structure[id_exp][train_test]['labels'][x]
         
         self.image_dir = image_dir
+        self.palmar_dorsal = palmar_dorsal
+        self.transform = transform
 
     def __len__(self):
         """Restituisce il numero di campioni nel dataset."""

@@ -3,23 +3,12 @@ from torchvision import transforms
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from CustomTransform import CustomDorsalTransform, CustomPalmTransform
 from CustomImageDataset import CustomImageDataset
 
-def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_path:str, tot_exp: int, batch_size=32):
-    # Definisci le trasformazioni da applicare alle immagini (opzionale)
-    palmar_transform = transforms.Compose([
-        CustomDorsalTransform(),
-        transforms.ToTensor(),          # Converte le immagini in tensori
-    ])
-
-    dorsal_transform = transforms.Compose([
-        CustomDorsalTransform(),
-        transforms.ToTensor(),          # Converte le immagini in tensori
-    ])
-
+def streamEvaluation(net1:nn.Module, net2:nn.Module, transforms:list, weights_palmar_dorsal:list, data_struct:dict, image_path:str, tot_exp: int, batch_size=32):
     # Move the model to the appropriate device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     # Carica la rete neurale
     net1.to(device)
     net2.to(device)
@@ -30,14 +19,13 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_pat
     tot_labels = torch.tensor([])
     tot_predicted = torch.tensor([])
 
-
     with torch.no_grad():
         for exp in range(tot_exp):
-            dataset_dorsal = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal='dorsal', transform=[palmar_transform, dorsal_transform] )
-            data_loader_dorsal = DataLoader(dataset_dorsal, batch_size=batch_size, shuffle=True)
+            dataset_dorsal = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal='dorsal', transform=transforms)
+            data_loader_dorsal = DataLoader(dataset_dorsal, batch_size=batch_size, shuffle=False)
            
-            dataset_palmar = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal='palmar', transform=[palmar_transform, dorsal_transform] )
-            data_loader_palmar= DataLoader(dataset_palmar, batch_size=batch_size, shuffle=True)
+            dataset_palmar = CustomImageDataset(image_dir=image_path, data_structure= data_struct, id_exp=exp, train_test='test', palmar_dorsal='palmar', transform=transforms)
+            data_loader_palmar= DataLoader(dataset_palmar, batch_size=batch_size, shuffle=False)
 
             for data_dorsal, data_palmar in zip(data_loader_dorsal, data_loader_palmar):
                 
@@ -57,7 +45,7 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, data_struct:dict, image_pat
                 probs_alexNetDorsal = softmax(outputs_alexNetDorsal)
     
                 # Esegui la score fusion combinando le probabilità
-                fused_probs = probs_alexNetPalmar * 0.3 + probs_alexNetDorsal * 0.7
+                fused_probs = probs_alexNetPalmar * weights_palmar_dorsal[0] + probs_alexNetDorsal * weights_palmar_dorsal[1]
     
                 # Ottieni la previsione finale
                 _, predicted = torch.max(fused_probs, 1)
