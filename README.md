@@ -7,10 +7,6 @@ The CNN was developed as part of the "Foundamentals of Data Science" course at S
 ## 🖥️ Steps
 
 1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/yourusername/hand-gender-classification.git
-   cd hand-gender-classification
-   ```
 
 2. **Install dependencies**:
 
@@ -18,9 +14,6 @@ The CNN was developed as part of the "Foundamentals of Data Science" course at S
    - [Dataset Link](https://sites.google.com/view/11khands)
 
 4. **Run the training script**:
-   ```bash
-   python train.py
-   ```
 
 # 🧑‍💻 Contributors
 
