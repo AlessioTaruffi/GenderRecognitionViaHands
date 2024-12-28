@@ -36,8 +36,6 @@ def calculate_precision(y_pred, y_true):
     # Compute precision
     FP = cm[0, 1]
     TP = cm[1, 1]
-
-    # Calcola la precision
     precision = TP / (TP + FP)
 
     return precision
