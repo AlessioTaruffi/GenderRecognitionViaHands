@@ -39,9 +39,9 @@ def preProcessingDorsal(image: np.ndarray):
     imageNormalized = imageNormalization(image)
     '''
     Blur the image using cv2.GaussianBlur(image, (3, 3), 0) where (3,3) rappresent the kernel dimension and 0 is the standard deviation for gaussian distribution along the x axis
-    cv2.GaussianBlur applica, ad ogni pixel, una sfocatura gaussiana utilizzando una funzione gaussiana per calcolare i valori medi dei pixel vicini.
-    Effettua una stima pesando andando a dare maggior peso ai pixel più vicini rispetto a quelli più lontani
-    SigmaX = 0 nella nostra funzione in modo che OpenCV calcola automaticamente la deviazione standard basandosi sulla dimensione del kernel
+    cv2.GaussianBlur applies a Gaussian blur to each pixel using a Gaussian function to calculate the average values ​​of the neighboring pixels.
+    It estimates by giving more weight to the closest pixels than to the ones further away
+    SigmaX = 0 in our function so that OpenCV automatically calculates the standard deviation based on the kernel size
     '''
     blurredImage = cv2.GaussianBlur(imageNormalized, (7, 7), 0) 
     # Image resize for AlexNet standard size

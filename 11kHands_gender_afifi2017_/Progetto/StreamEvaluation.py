@@ -9,7 +9,7 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, transforms:list, weights_pa
     # Move the model to the appropriate device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # Carica la rete neurale
+    # Move the model to the appropriate device
     net1.to(device)
     net2.to(device)
     
@@ -39,15 +39,15 @@ def streamEvaluation(net1:nn.Module, net2:nn.Module, transforms:list, weights_pa
                 outputs_alexNetPalmar = net1(palmar_images)
                 outputs_alexNetDorsal = net2(dorsal_images)
 
-                # Applica la softmax agli output per ottenere le probabilità
+                # Apply softmax to the outputs
                 softmax = torch.nn.Softmax(dim=1)
                 probs_alexNetPalmar = softmax(outputs_alexNetPalmar)
                 probs_alexNetDorsal = softmax(outputs_alexNetDorsal)
     
-                # Esegui la score fusion combinando le probabilità
+                # Execute the weighted sum
                 fused_probs = probs_alexNetPalmar * weights_palmar_dorsal[0] + probs_alexNetDorsal * weights_palmar_dorsal[1]
     
-                # Ottieni la previsione finale
+                # Obtain the predicted class
                 _, predicted = torch.max(fused_probs, 1)
                 
                 tot_labels = torch.cat((tot_labels, labels))

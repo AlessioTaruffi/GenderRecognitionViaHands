@@ -9,11 +9,11 @@ from CustomTransform import buildAlexNetTransformations, buildLeNetTransformatio
 
 
 # Set number of experiments
-num_exp = 10
-image_path = '/home/mattpower/Downloads/Hands'
-csv_path = '/home/mattpower/Documents/backup/Magistrale/Sapienza/ComputerScience/FDS/SecretProject/GenderRecognitionViaHands/11kHands_gender_afifi2017_/Progetto/HandInfo.csv'
-num_train = 200
-num_test = 50
+num_exp = 50
+image_path = 'path/to/dataset'
+csv_path = 'GenderRecognitionViaHands/11kHands_gender_afifi2017_/Progetto/HandInfo.csv'
+num_train = 400
+num_test = 200
 
 # Create the networks
 leNet = MyLeNetCNN(num_classes=2)
@@ -42,13 +42,14 @@ for param in alexNet2.parameters():
 for param in alexNet2.classifier[6].parameters():
     param.requires_grad = True
 
-net_palmar = alexNet1
+# Set the networks
+net_palmar = leNet
 net_dorsal = alexNet2
 
 weight_palmar = 0.4
 weight_dorsal = 0.6
 
-# Build the tranformations
+# Build the tranformations for the networks
 palmar_transforms = buildAlexNetTransformations()
 if isinstance(net_palmar, MyLeNetCNN):
         palmar_transforms = buildLeNetTransformations()
@@ -102,12 +103,6 @@ calculate_confusion_matrix(un_labels, un_predicted)
 # Calculate the loss plot
 calculate_loss_plot(train_loss_p)
 calculate_loss_plot(train_loss_d)
-
-
-# Calculate the accuracy plot
-#calculate_accuracy_plot(ln_his_labels, ln_his_predicted)
-#calculate_accuracy_plot(an_his_labels, an_his_predicted)
-#calculate_accuracy_plot(un_his_label, un_his_predicted)
 
 # Print the performance metrics
 print("\nPerformance Metrics\n")

@@ -1,9 +1,7 @@
-# Load in relevant libraries, and alias where appropriate
-import torch
 import torch.nn as nn
-import torchvision
 import torchvision.transforms as transforms
 
+# Definition of the LeNet CNN
 class MyLeNetCNN(nn.Module):
     def __init__(self, num_classes):
         super(MyLeNetCNN, self).__init__()
