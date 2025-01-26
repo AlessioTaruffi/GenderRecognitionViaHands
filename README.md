@@ -15,8 +15,6 @@ The CNN was developed as part of the "Foundamentals of Data Science" course at S
 
 4. **Run the training script**:
 
-## 🧾📈 More details and Performance evaluation
-For more details on the implementation and its performance, you can refer to the paper [HandsGenderRecognition](https://github.com/patriziorenelli/HandsGenderRecognition/blob/main/HandsGenderRecognition.pdf)
 # 🧑‍💻 Contributors
 
 - Matteo Rocco - 2218397
